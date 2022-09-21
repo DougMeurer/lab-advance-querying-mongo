@@ -229,15 +229,18 @@ const cursor = coll.find(filter, { projection, sort });
 
 
 
-
-********************* NAO CONSEGUI FAZER *********************** 
-
-{name: 1, founded_year: 1}
-.sort({founded_year: {$where: founded_year != null}}) ???
-
-****************************************************************
-
-
+const filter = {
+  'founded_year': {
+    '$not': {
+      '$eq': null
+    }
+  }
+};
+const projection = {
+  'name': 1, 
+  'founded_year': 1
+};
+const cursor = coll.find(filter, { projection });
 
 
 
@@ -245,7 +248,6 @@ const cursor = coll.find(filter, { projection, sort });
 ### 15. All the companies that have been founded on the first seven days of the month, including the seventh. Sort them by their `acquisition price` in a descending order. Limit the search to 10 documents.
 
 
-****MISSING SORT******
 
 const filter = {
   '$and': [
@@ -260,6 +262,9 @@ const filter = {
     }
   ]
 };
+const sort = {
+  'acquisition.price_amount': -1
+};
 const cursor = coll.find(filter);
 
 
@@ -267,7 +272,7 @@ const cursor = coll.find(filter);
 
 const filter = {
   '$and': [
-    {
+    {   
       'category_code': 'web'
     }, {
       'number_of_employees': {
@@ -300,24 +305,19 @@ const cursor = coll.find(filter);
 
 ### 18. All the companies that have been acquired on the first trimester of the year. Limit the search to 10 companies, and retrieve only their `name` and `acquisition` fields.
 
-****ACQUISITION HAS MANY NULLS*******
-
 const filter = {
-  '$and': [
-    {
-      'founded_month': {
-        '$gte': 1
-      }
-    }, {
-      'founded_month': {
-        '$lte': 3
-      }
+  'acquisition': {
+    '$not': {
+      '$eq': null
     }
-  ]
+  }, 
+  'founded_month': {
+    '$lte': 3
+  }
 };
 const projection = {
   'name': 1, 
-  'acquisition': 1
+  'founded_year': 1
 };
 const limit = 10;
 const cursor = coll.find(filter, { projection, limit });
